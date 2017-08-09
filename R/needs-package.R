@@ -14,7 +14,7 @@ NULL
 
 .onLoad <- function(libname, pkgname) {
   while (".needs" %in% search()) detach(.needs)
-  sysfile <- system.file("extdata", "prompt_user", package = "needs")
+  sysfile <- system.file("extdata", "promptUser", package = "needs")
   prompt_user <- as.logical(scan(sysfile, quiet = TRUE))
   options(needs.prompt_user = prompt_user)
 
