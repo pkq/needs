@@ -41,4 +41,3 @@ prioritize <- function(...) {
   }
   do.call(needs, rev(pkgs[!pos]))
 }
-

@@ -9,7 +9,7 @@
 #' @param ... Packages, given as unquoted names or character strings. Specify a
 #'   required package version as \code{package = "version"}.
 #'
-#' @param .printConflicts Logical, specifying whether to print a summary of
+#' @param .print_conflicts Logical, specifying whether to print a summary of
 #'   objects that exist in multiple places on the search path along with their
 #'   respective locations. Set to \code{TRUE} to identify any masked functions.
 #'   Objects in the base package and the global environment are ignored.
@@ -39,25 +39,26 @@
 #'
 
 
-needs <- function(..., .printConflicts = F) {
+needs <- function(..., .print_conflicts = FALSE) {
   needs_ <- function(...) {
     pkgs <- unlist(...)
     if (length(pkgs)) {
       loaded <- suppressWarnings(suppressMessages(
-        sapply(pkgs, library, character = T, logical = T)))
+        sapply(pkgs, library, character = TRUE, logical = TRUE)))
       if (any(!loaded)) {
         missing <- pkgs[!loaded]
         cat("installing packages:\n")
         cat(missing, sep = "\n")
         utils::install.packages(missing, repos = "http://cran.rstudio.com/",
-                                quiet = T)
+                                quiet = TRUE)
       }
       # attach packages
-      suppressWarnings(suppressMessages(sapply(pkgs, library, character = T)))
+      suppressWarnings(suppressMessages(sapply(pkgs, library,
+                                               character = TRUE)))
     }
   }
 
-  packageInfo <- utils::installed.packages()
+  package_info <- utils::installed.packages()
 
   #{{parse}}
   if (!missing(...)) {
@@ -69,7 +70,9 @@ needs <- function(..., .printConflicts = F) {
       mapply(paste, names(pkgs), as.character(pkgs),
              MoreArgs = list(sep = ":"))
     }
-    parts <- lapply(strsplit(parsed, "[:=(, ]+"), function(d) { d[d != ""] })
+    parts <- lapply(strsplit(parsed, "[:=(, ]+"), function(d) {
+      d[d != ""]
+      })
     grouped <- split(parts, sapply(parts, length))
     #{{/parse}}
 
@@ -77,35 +80,36 @@ needs <- function(..., .printConflicts = F) {
     needs_(grouped$`1`)
 
     # if version specified...
-    toCheck <- grouped$`2`
+    to_check <- grouped$`2`
 
-    if (length(toCheck)) {
-      installedPackages <- packageInfo[, "Package"]
-      needsPackage <- sapply(toCheck, `[`, 1)
-      needsVersion <- sapply(toCheck, function(x) {
+    if (length(to_check)) {
+      installed_packages <- package_info[, "Package"]
+      needs_package <- sapply(to_check, `[`, 1)
+      needs_version <- sapply(to_check, function(x) {
         gsub("[^0-9.-]+", "", x[2])
       })
 
-      installed <- needsPackage %in% installedPackages
-      needs_(needsPackage[!installed])
+      installed <- needs_package %in% installed_packages
+      needs_(needs_package[!installed])
 
-      compared <- mapply(utils::compareVersion, needsVersion[installed],
-                         packageInfo[needsPackage[installed], "Version"])
+      compared <- mapply(utils::compareVersion, needs_version[installed],
+                         package_info[needs_package[installed], "Version"])
       if (any(compared == 1)) {
-        toUpdate <- needsPackage[installed][compared == 1]
+        to_update <- needs_package[installed][compared == 1]
         cat("updating packages:\n")
-        cat(toUpdate, sep = "\n")
-        utils::update.packages(oldPkgs = toUpdate, ask = F)
+        cat(to_update, sep = "\n")
+        utils::update.packages(oldPkgs = to_update, ask = FALSE)
       }
-      needs_(needsPackage[installed])
+      needs_(needs_package[installed])
     }
 
   }
 
-  if (.printConflicts) {
+  if (.print_conflicts) {
     s <- search()
-    conflict <- conflicts(detail = T)
-    conflict[names(conflict) %in% c("package:base", "Autoloads", ".GlobalEnv")] <- NULL
+    conflict <- conflicts(detail = TRUE)
+    conflict[names(conflict) %in% c("package:base", "Autoloads",
+                                    ".GlobalEnv")] <- NULL
     tab <- table(unlist(sapply(conflict, unique)))
     fxns <- names(tab[tab > 1])
     where <- sapply(fxns, function(f) {
@@ -119,8 +123,8 @@ needs <- function(..., .printConflicts = F) {
     if (length(where)) {
       df <- data.frame(FUNCTION = names(where),
                        LOCATION = paste0("   ", where[order(names(where))]),
-                       stringsAsFactors = F)
-      print(df, row.names = F)
+                       stringsAsFactors = FALSE)
+      print(df, row.names = FALSE)
     }
   }
 

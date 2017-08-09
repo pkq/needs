@@ -10,9 +10,9 @@ template <- list(
     out
   },
 
-  parser = 'parser <- function(...) {
+  parser = "parser <- function(...) {
   {{#parse}}
-  grouped\n}',
+  grouped\n}",
 
   profile = 'tryCatch(needs(), error = function(e) {
   while (".needs" %in% search()) detach(.needs)

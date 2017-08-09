@@ -14,38 +14,41 @@ NULL
 
 .onLoad <- function(libname, pkgname) {
   while (".needs" %in% search()) detach(.needs)
-  sysfile <- system.file("extdata", "promptUser", package = "needs")
-  promptUser <- as.logical(scan(sysfile, quiet = T))
-  options(needs.promptUser = promptUser)
+  sysfile <- system.file("extdata", "prompt_user", package = "needs")
+  prompt_user <- as.logical(scan(sysfile, quiet = TRUE))
+  options(needs.prompt_user = prompt_user)
 
-  if (getOption("needs.promptUser")) {
+  if (getOption("needs.prompt_user")) {
 
     if (interactive()) {
 
-      q <- "Should `needs` load itself when it's... needed?\n  (this is recommended)"
+      q <- "Should `needs` load itself when it's... needed?\n
+      (this is recommended)"
       choices <- sample(c("Yes", "No"))
       yes <- choices[utils::menu(choices, title = q)] == "Yes"
 
       if (isTRUE(yes)) {
 
-        siteProfile <- if (is.na(Sys.getenv("R_PROFILE", unset = NA))) {
+        site_profile <- if (is.na(Sys.getenv("R_PROFILE", unset = NA))) {
           file.path(Sys.getenv("R_HOME"), "etc", "Rprofile.site")
         } else {
           Sys.getenv("R_PROFILE")
         }
-        if (!file.exists(siteProfile)) {
-          file.create(siteProfile)
+        if (!file.exists(site_profile)) {
+          file.create(site_profile)
         }
-        cxn <- file(siteProfile)
+        cxn <- file(site_profile)
         lines <- readLines(cxn)
-        if (!any(grepl("^[:blank:]*autoload\\(\"needs\", \"needs\"\\)", lines))) {
-          write('\n\nautoload("needs", "needs")\n\n', file = siteProfile, append = T)
+        if (!any(grepl("^[:blank:]*autoload\\(\"needs\", \"needs\"\\)",
+                       lines))) {
+          write('\n\nautoload("needs", "needs")\n\n', file = site_profile,
+                append = TRUE)
         }
         close(cxn)
 
       }
 
-      options(needs.promptUser = F)
+      options(needs.prompt_user = FALSE)
       write(0, file = sysfile)
 
     }
@@ -53,7 +56,8 @@ NULL
 }
 
 .onAttach <- function(libname, pkgname) {
-  if (getOption("needs.promptUser") && !interactive()) {
-    packageStartupMessage("\nLoad `package:needs` in an interactive session to set auto-load flag\n")
+  if (getOption("needs.prompt_user") && !interactive()) {
+    packageStartupMessage("\nLoad `package:needs` in an interactive session to
+                          set auto-load flag\n")
   }
 }

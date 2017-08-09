@@ -19,8 +19,8 @@
 
 toProfile <- function(dir = NULL, append = T) {
   contents <- list(body = paste(c("", deparse(body(needs))), collapse = "\n"))
-  profileText <- template$render("profile", contents)
+  profile_text <- template$render("profile", contents)
   dir <- ifelse(is.null(dir), getwd(), dir)
   path <- file.path(dirname(dir), basename(dir), ".Rprofile")
-  cat(profileText, file = path, append = append)
+  cat(profile_text, file = path, append = append)
 }
