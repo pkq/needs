@@ -9,6 +9,9 @@
 #' @param ... Packages, given as unquoted names or character strings. Specify a
 #'   required package version as \code{package = "version"}.
 #'
+#' @param quiet Logical, specifying whether to supress details of package 
+#'   installations (if any). Defaults to \code{TRUE}.
+#'
 #' @param .printConflicts Logical, specifying whether to print a summary of
 #'   objects that exist in multiple places on the search path along with their
 #'   respective locations. Set to \code{TRUE} to identify any masked functions.
@@ -39,7 +42,7 @@
 #'
 
 
-needs <- function(..., .printConflicts = F) {
+needs <- function(..., quiet = TRUE, .printConflicts = F) {
   needs_ <- function(...) {
     pkgs <- unlist(...)
     if (length(pkgs)) {
@@ -50,7 +53,7 @@ needs <- function(..., .printConflicts = F) {
         cat("installing packages:\n")
         cat(missing, sep = "\n")
         utils::install.packages(missing, repos = "http://cran.rstudio.com/",
-                                quiet = T)
+                                quiet = quiet)
       }
       # attach packages
       suppressWarnings(suppressMessages(sapply(pkgs, library, character = T)))
