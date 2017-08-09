@@ -4,13 +4,13 @@
 \alias{needs}
 \title{Attach/install packages}
 \usage{
-needs(..., .printConflicts = F)
+needs(..., .print_conflicts = FALSE)
 }
 \arguments{
 \item{...}{Packages, given as unquoted names or character strings. Specify a
 required package version as \code{package = "version"}.}
 
-\item{.printConflicts}{Logical, specifying whether to print a summary of
+\item{.print_conflicts}{Logical, specifying whether to print a summary of
 objects that exist in multiple places on the search path along with their
 respective locations. Set to \code{TRUE} to identify any masked functions.
 Objects in the base package and the global environment are ignored.
@@ -47,4 +47,3 @@ needs(foo,
 \seealso{
 \code{\link{needs-package}}
 }
-

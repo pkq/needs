@@ -12,10 +12,9 @@ a minimum version number, and it will update old packages as needed. No more
 changing your code to reinstall packages every time you update R ---
 \code{needs} does it for you.
 }
-\author{
-Josh Katz
-}
 \references{
 Source repo: \url{http://www.github.com/joshkatz/needs}
 }
-
+\author{
+Josh Katz
+}
